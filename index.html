@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OneFile Site</title>
+
+<style>
+/* ========== 基础变量 ========== */
+:root {
+  --bg: #f5f7fb;
+  --card: #ffffff;
+  --text: #222;
+  --primary: #4f46e5;
+  --shadow: rgba(0,0,0,.08);
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e5e7eb;
+  --primary: #818cf8;
+  --shadow: rgba(0,0,0,.4);
+}
+
+/* ========== 全局 ========== */
+* {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: .3s;
+}
+
+/* ========== 导航 ========== */
+nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--card);
+  box-shadow: 0 2px 10px var(--shadow);
+}
+
+nav h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+nav button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ========== Hero ========== */
+.hero {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: .5rem;
+}
+
+.hero p {
+  opacity: .8;
+}
+
+/* ========== 特性卡片 ========== */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.card {
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: transform .2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* ========== 留言板 ========== */
+.board {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.board textarea {
+  width: 100%;
+  height: 100px;
+  padding: .8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.board button {
+  margin-top: .5rem;
+  padding: .6rem 1.2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.messages div {
+  background: var(--card);
+  margin-top: .5rem;
+  padding: .8rem;
+  border-radius: 8px;
+}
+
+/* ========== 动画 ========== */
+.fade {
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- 导航 -->
+<nav>
+  <h1>🌐 OneFile Site</h1>
+  <button onclick="toggleTheme()">🌓</button>
+</nav>
+
+<!-- Hero -->
+<section class="hero fade">
+  <h2>一个 HTML，搞定一切</h2>
+  <p>无需服务器 · 无需框架 · 纯前端</p>
+</section>
+
+<!-- 特性 -->
+<section class="features">
+  <div class="card">
+    <h3>⚡ 极速</h3>
+    <p>单文件加载，毫秒级渲染</p>
+  </div>
+  <div class="card">
+    <h3>📱 响应式</h3>
+    <p>手机 / 平板 / 桌面自适应</p>
+  </div>
+  <div class="card">
+    <h3>🧠 智能</h3>
+    <p>本地存储，无需数据库</p>
+  </div>
+</section>
+
+<!-- 留言板 -->
+<section class="board fade">
+  <h3>📝 留言板</h3>
+  <textarea id="msg" placeholder="说点什么..."></textarea>
+  <button onclick="addMsg()">发布</button>
+
+  <div class="messages" id="messages"></div>
+</section>
+
+<script>
+/* ========== 主题切换 ========== */
+function toggleTheme() {
+  const t = document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme", t === "dark" ? "light" : "dark");
+  localStorage.setItem("theme", t === "dark" ? "light" : "dark");
+}
+
+/* 初始化主题 */
+const saved = localStorage.getItem("theme");
+if (saved) document.documentElement.setAttribute("data-theme", saved);
+
+/* ========== 留言功能 ========== */
+function addMsg() {
+  const text = document.getElementById("msg").value.trim();
+  if (!text) return;
+
+  const list = JSON.parse(localStorage.getItem("msgs") || "[]");
+  list.push(text);
+  localStorage.setItem("msgs", JSON.stringify(list));
+
+  document.getElementById("msg").value = "";
+  renderMsg();
+}
+
+function renderMsg() {
+  const list = JSON.parse(localStorage.getItem("msgs") || "[]");
+  document.getElementById("messages").innerHTML = list
+    .map(m => `<div>${m}</div>`)
+    .join("");
+}
+
+renderMsg();
+</script>
+
+</body>
+</html>
